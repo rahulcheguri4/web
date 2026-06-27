@@ -1,0 +1,50 @@
+timescale 1ns/1ps
+
+module tb_ram_8x8;
+
+    reg clk;
+    reg rst;
+    reg we, re;
+    reg [2:0] wr_addr, rd_addr;
+    reg [7:0] data_in;
+    wire [7:0] data_out;
+
+    ram_8x8 uut (
+        .clk(clk),
+        .rst(rst),
+        .we(we),
+        .re(re),
+        .wr_addr(wr_addr),
+        .rd_addr(rd_addr),
+        .data_in(data_in),
+        .data_out(data_out)
+    );
+
+    always #5 clk = ~clk;
+
+    initial begin
+        clk = 0;
+        rst = 1;
+        we = 0; re = 0;
+        wr_addr = 0; rd_addr = 0;
+        data_in = 0;
+
+        #10 rst = 0;
+
+        #10 we = 1; wr_addr = 3'b000; data_in = 8'hAA;
+        #10 wr_addr = 3'b001; data_in = 8'hBB;
+        #10 wr_addr = 3'b010; data_in = 8'hCC;
+
+        #10 we = 0; re = 1; rd_addr = 3'b000;
+        #10 rd_addr = 3'b001;
+        #10 rd_addr = 3'b010;
+
+        #10 rst = 1;
+        #10 rst = 0;
+
+        #10 re = 1; rd_addr = 3'b000;
+
+        #20 $finish;
+    end
+
+endmodule
