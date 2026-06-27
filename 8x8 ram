@@ -1,0 +1,29 @@
+module ram_8x8 (
+    input clk,
+    input rst,
+    input we,
+    input re,
+    input [2:0] wr_addr,
+    input [2:0] rd_addr,
+    input [7:0] data_in,
+    output reg [7:0] data_out
+);
+
+    reg [7:0] mem [0:7];
+    integer i;
+
+    always @(posedge clk) begin
+        if (rst) begin
+            for (i = 0; i < 8; i = i + 1)
+                mem[i] <= 8'b0;
+            data_out <= 8'b0;
+        end
+        else begin
+            if (we)
+                mem[wr_addr] <= data_in;
+            if (re)
+                data_out <= mem[rd_addr];
+        end
+    end
+
+endmodule
